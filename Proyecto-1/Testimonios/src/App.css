@@ -1,0 +1,49 @@
+/* normalmente se asignan estilos que se aplican en general a la aplicacion */
+
+*{
+  margin: 10px;
+  padding: 0;
+  
+}
+
+
+html,
+body{
+  font-size: 18px;
+  background-color: #f5f6f7;
+}
+
+h1{
+  
+  max-width: 940px;
+  font-size: 2.5em;
+  font-family: Lato, sans-serif;
+  font-weight: 700;
+  /* Peso de la letra (Grosor) */
+  line-height: 1.1;
+  /* Altura de la linea */
+  margin: 40px 30px;
+  /*   primer numero el margen superior e inferior y el otro derecho e izquierdo        */
+}
+
+.App{
+  /* para className se debe llamar con un . */
+  min-height: 100vh;
+  /*permite que se adapte a la altura del navegador. */
+  display: flex;
+  /* Una forma para definir como se van a ubicar los elementos dentro del contenedor */
+  flex-wrap: wrap;
+  /* Si un elemento toma todo el ancho del contenedor, los otros elementos se ubicaran en la siguiente linea, debajo de" */
+  justify-content: center;
+  /* centra los elementos horizontal y verticalmente */
+  text-align: center;
+}
+
+.contenedor-principal{
+  min-height: 600px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+  
