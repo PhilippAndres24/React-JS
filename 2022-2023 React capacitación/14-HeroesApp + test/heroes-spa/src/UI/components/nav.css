@@ -1,0 +1,7 @@
+
+
+@media (max-width: 986px) {
+    .justify-content-end {
+        justify-content: flex-start !important;
+      }
+}

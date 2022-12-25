@@ -1,0 +1,19 @@
+    Nuestra primera aplicación - Hola Mundo
+
+    Exposiciones sobre los componentes
+
+    Creación de componentes (Functional Components)
+
+    Propiedades - Props
+
+    Impresiones en el HTML
+
+    PropTypes
+
+    DefaultProps
+
+    Introducción general a los Hooks
+
+    useState
+
+Es una sección importante, especialmente para todos los que
