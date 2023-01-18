@@ -3,17 +3,38 @@
     host + /api/auth
 */
 
-const { Router }  = require('express');
+const { Router } = require('express');
+const { check } = require('express-validator');
+const { validarCampos } = require('../middlewares/validar-campos')
+const { crearUsuario, loginUsuario, revalidarToken } = require('../controllers/auth');
+const { validarJWT } = require('../middlewares/validar-jwt')
+
+
 const router = Router();
 
-const { newUSer, loginUser, renewToken } = require('../controllers/auth');
 
 
-router.post('/new', newUSer );
 
-router.post('/', loginUser );
+router.post(
+    '/new',
+    [
+        check('name', 'El nombre es obligatorio').not().isEmpty(),
+        check('email', 'El email es obligatorio').isEmail(),
+        check('password', 'El password debe ser de 6 caracteres').isLength({ min: 6 }), validarCampos
+    ],
+    crearUsuario);
 
-router.get('/renew', renewToken );
+
+router.post(
+    '/',
+    [
+        check('email', 'El email es obligatiorio').isEmail(),
+        check('password', 'La password debe ser de 6 caracteres').isLength({ min: 6 }),
+        validarCampos
+    ]
+    , loginUsuario);
+
+router.get('/renew', validarJWT ,revalidarToken);
 
 
 

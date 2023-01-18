@@ -1,41 +1,127 @@
 //funciones que tenemos definidas en auth.js de Routes.
-const {response}  = require('express')
+const { response } = require('express');
+const bcrypt = require('bcryptjs');
+const Usuario = require('../models/Usuario');
+const { generarJWT } = require('../helpers/jwt');
 
 
-const newUSer = (req, res = response) => {
-    console.log(req);
-   
 
-    res.json({
-        ok: true,
-        msg: 'Registro',
-        user: req.body
-    })
+
+const crearUsuario = async (req, res = response) => {
+
+    const { email, password } = req.body;
+
+    try {
+
+        let usuario = await Usuario.findOne({ email: email })
+
+        if (usuario) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Un usuario existe con ese correo'
+            })
+        }
+
+
+        usuario = new Usuario(req.body);
+
+        //Encriptar contraseña
+
+        const salt = bcrypt.genSaltSync();
+        usuario.password = bcrypt.hashSync(password, salt);
+
+
+
+        await usuario.save();
+        
+        //Generar nuestro JWT (TOKEN)
+        const token = await generarJWT( usuario.id, usuario.name ); //con esto generamos nuestro token.
+
+
+        res.status(201).json({
+            ok: true,
+            uid: usuario.id,
+            name: usuario.name,
+            token
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Porfavor hable con el administrador'
+        })
+    }
 
 }
 
-const loginUser = (req, res = response) => { 
-   
+const loginUsuario = async(req, res = response) => {
+    const { email, password } = req.body;
 
-    res.json({
-        ok: true,
-        msg: 'login',
-        user:req.body
-    })
+    try {
+        const usuario = await Usuario.findOne({ email: email })
+
+        if (!usuario) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe usuario con ese email'
+            })
+        }
+
+        //Confirmar los Passwords
+        const validPassword = bcrypt.compareSync( password, usuario.password);
+
+        if ( !validPassword) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Password Incorrecto'
+            })
+        }
+
+        //Generar nuestro JWT (TOKEN)
+        const token =  await generarJWT( usuario.id, usuario.name );//con esto generamos nuestro token.
+
+
+
+       
+        res.json({
+            ok: true,
+            uid: usuario.id,
+            name: usuario.name,
+            token
+
+        })
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Porfavor hable con el administrador'
+        })
+    }
+
+
+
+
 }
 
-const renewToken = (req, res) => {
+const revalidarToken = async(req, res = response) => {
+    const { uid, name } = req;
+
+
+    //generar un nuevo JWT y retornarlo en esta peticion
+    const token =  await  generarJWT(uid, name)
 
     res.json({
         ok: true,
-        msg: 'renew'
+        token
     })
 }
 
 
 
 module.exports = {
-    newUSer,
-    loginUser,
-    renewToken,
+    crearUsuario,
+    loginUsuario,
+    revalidarToken
 };
